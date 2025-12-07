@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "npx http-server -p 8000 -o",
+        "build": "echo '📦 Static site - all files are ready for deployment' && ls -la index.html",
         "deploy": "npx wrangler pages deploy . --project-name=air-writing"
     },
     "keywords": [
