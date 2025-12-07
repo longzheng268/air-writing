@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # Verification script for Cloudflare Pages deployment
 # This script checks if all required files are present
