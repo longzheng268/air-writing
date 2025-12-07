@@ -190,32 +190,46 @@ ctx.quadraticCurveTo(x1, y1, cpx, cpy);
    - 选择 **Connect to Git**
    - 授权并选择你的仓库
 
-4. **配置构建设置**
+4. **配置构建设置** ⚠️ **重要**
    ```
    Framework preset: None
-   Build command: (留空)
+   Build command: (留空 - 不要填写任何内容)
    Build output directory: /
    Root directory: /
    ```
+   
+   **注意事项：**
+   - ❌ **不要使用** `npx wrangler deploy`（这是 Workers 命令，不适用于 Pages）
+   - ❌ **不要使用** `npm run deploy`（这是本地 CLI 部署命令）
+   - ✅ **保持 Build command 完全为空**（这是静态站点，无需构建）
 
 5. **部署**
    - 点击 **Save and Deploy**
    - 等待部署完成（通常 1-2 分钟）
 
-### 方式二：使用 Wrangler CLI
+### 方式二：使用 Wrangler CLI（命令行部署）
 
-如果你需要使用命令行部署：
+如果你需要使用命令行部署（适用于本地开发环境）：
 
 ```bash
-# 安装 Wrangler
+# 方法 1：使用项目中的 npm 脚本（推荐）
+npm run deploy
+
+# 方法 2：直接使用 wrangler 命令
+# 首先安装 Wrangler（如果未安装）
 npm install -g wrangler
 
 # 登录 Cloudflare
 wrangler login
 
-# 部署项目
+# 部署项目（注意：使用 pages deploy，不是 deploy）
 wrangler pages deploy . --project-name=air-writing
 ```
+
+**重要提示：**
+- ✅ 本地命令行部署使用 `wrangler pages deploy` 或 `npm run deploy`
+- ❌ **不要使用** `wrangler deploy`（这是 Workers 命令，会报错）
+- 📝 Cloudflare Pages 和 Cloudflare Workers 是不同的产品，使用不同的命令
 
 ### 部署配置说明
 
@@ -320,10 +334,32 @@ const text = I18N.t('newKey');
 ### 部署失败
 
 检查以下几点：
+
+**错误：`It looks like you've run a Workers-specific command in a Pages project`**
+
+如果在 Cloudflare Pages 部署时看到此错误：
+
+**原因：** 在 Cloudflare Pages 项目设置中使用了错误的部署命令（如 `npx wrangler deploy`）
+
+**解决方案：**
+1. 登录 Cloudflare Dashboard
+2. 进入你的 Pages 项目
+3. 点击 **Settings** → **Builds & deployments**
+4. 点击 **Edit configuration**
+5. ⚠️ **确保 "Build command" 字段完全为空**（不要填写任何内容）
+6. 确保 "Build output directory" 设置为 `/`
+7. 点击 **Save** 并重新部署
+
+**说明：**
+- `npx wrangler deploy` 是用于 Cloudflare Workers 的命令
+- `npx wrangler pages deploy` 是用于 Cloudflare Pages 的命令
+- 但在 Cloudflare Pages Dashboard 的 Git 集成部署中，不需要任何部署命令
+- 只有在本地命令行手动部署时才需要使用 `npm run deploy` 或 `wrangler pages deploy`
+
+**其他检查项：**
 1. 确保 Build command 为空
 2. Build output directory 设置为 `/`
-3. 确保所有文件都已推送到 Git
-4. 检查 Cloudflare Pages 的构建日志
+3. Framework preset 设置为 None
 
 ## 🌐 浏览器兼容性
 
@@ -553,32 +589,46 @@ This project is a pure static website that supports automatic deployment to Clou
    - Select **Connect to Git**
    - Authorize and select your repository
 
-4. **Configure build settings**
+4. **Configure build settings** ⚠️ **IMPORTANT**
    ```
    Framework preset: None
-   Build command: (leave empty)
+   Build command: (leave empty - do not enter anything)
    Build output directory: /
    Root directory: /
    ```
+   
+   **Important Notes:**
+   - ❌ **DO NOT use** `npx wrangler deploy` (this is a Workers command, not for Pages)
+   - ❌ **DO NOT use** `npm run deploy` (this is for local CLI deployment)
+   - ✅ **Keep Build command completely empty** (this is a static site, no build needed)
 
 5. **Deploy**
    - Click **Save and Deploy**
    - Wait for deployment to complete (usually 1-2 minutes)
 
-### Method 2: Using Wrangler CLI
+### Method 2: Using Wrangler CLI (Command Line Deployment)
 
-If you need to deploy via command line:
+If you need to deploy via command line (for local development environment):
 
 ```bash
-# Install Wrangler
+# Method 1: Use the npm script in the project (Recommended)
+npm run deploy
+
+# Method 2: Use wrangler command directly
+# First install Wrangler (if not already installed)
 npm install -g wrangler
 
 # Login to Cloudflare
 wrangler login
 
-# Deploy project
+# Deploy project (Note: use pages deploy, not deploy)
 wrangler pages deploy . --project-name=air-writing
 ```
+
+**Important Notes:**
+- ✅ For local CLI deployment, use `wrangler pages deploy` or `npm run deploy`
+- ❌ **DO NOT use** `wrangler deploy` (this is a Workers command and will error)
+- 📝 Cloudflare Pages and Cloudflare Workers are different products with different commands
 
 ### Deployment Configuration
 
@@ -681,6 +731,27 @@ Smoothing algorithm is implemented. To adjust, see Configuration section.
 - Verify browser supports ES6 modules
 
 ### Deployment Failure
+
+**Error: `It looks like you've run a Workers-specific command in a Pages project`**
+
+If you see this error when deploying to Cloudflare Pages:
+
+**Cause:** Used incorrect deploy command in Cloudflare Pages project settings (like `npx wrangler deploy`)
+
+**Solution:**
+1. Log in to Cloudflare Dashboard
+2. Go to your Pages project
+3. Click **Settings** → **Builds & deployments**
+4. Click **Edit configuration**
+5. ⚠️ **Ensure "Build command" field is completely empty** (do not enter anything)
+6. Ensure "Build output directory" is set to `/`
+7. Click **Save** and redeploy
+
+**Explanation:**
+- `npx wrangler deploy` is the command for Cloudflare Workers
+- `npx wrangler pages deploy` is the command for Cloudflare Pages
+- However, in Cloudflare Pages Dashboard Git integration deployment, no deploy command is needed
+- Only use `npm run deploy` or `wrangler pages deploy` when manually deploying from local command line
 
 **MODULE_NOT_FOUND Error:**
 If you see `Error: Cannot find module '/opt/buildhome/repo/deploy'`:
