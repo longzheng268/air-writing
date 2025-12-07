@@ -170,45 +170,82 @@ ctx.quadraticCurveTo(x1, y1, cpx, cpy);
 
 ## ☁️ Cloudflare Pages 部署
 
-本项目可以直接部署到 Cloudflare Pages，无需任何构建步骤。
+本项目是纯静态网站，支持通过 Git 集成自动部署到 Cloudflare Pages。
 
-### 方法一：通过 Git 集成（推荐）
+### 方式一：Git 集成（推荐 - 自动部署）
 
-1. 将代码推送到 GitHub/GitLab
-2. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)
-3. 进入 **Pages** → **Create a project**
-4. 选择你的 Git 仓库
-5. 配置构建设置：
-   - **Framework preset**: None
-   - **Build command**: (留空)
-   - **Build output directory**: `/`
-6. 点击 **Save and Deploy**
+1. **推送代码到 Git 仓库**
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git push origin main
+   ```
 
-### 方法二：使用 Wrangler CLI
+2. **登录 Cloudflare Dashboard**
+   - 访问 https://dash.cloudflare.com/
+   - 进入 **Pages** 部分
+
+3. **创建新项目**
+   - 点击 **Create a project**
+   - 选择 **Connect to Git**
+   - 授权并选择你的仓库
+
+4. **配置构建设置**
+   ```
+   Framework preset: None
+   Build command: (留空)
+   Build output directory: /
+   Root directory: /
+   ```
+
+5. **部署**
+   - 点击 **Save and Deploy**
+   - 等待部署完成（通常 1-2 分钟）
+
+### 方式二：使用 Wrangler CLI
+
+如果你需要使用命令行部署：
 
 ```bash
-# 安装依赖
-npm install
+# 安装 Wrangler
+npm install -g wrangler
 
-# 部署到 Cloudflare Pages
-npm run deploy
+# 登录 Cloudflare
+wrangler login
+
+# 部署项目
+wrangler pages deploy . --project-name=air-writing
 ```
 
-### 环境要求
+### 部署配置说明
 
-- ✅ 纯静态文件，无需服务器端渲染
-- ✅ 使用 ES6 模块，现代浏览器原生支持
-- ✅ 所有资源通过 CDN 加载（MediaPipe）
+项目包含 `wrangler.toml` 配置文件：
+
+```toml
+name = "air-writing"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
+```
+
+### 为什么是纯静态项目？
+
+- ✅ 无需编译或构建
+- ✅ ES6 模块由浏览器原生支持
+- ✅ 所有文件可以直接使用
 - ✅ 兼容 Cloudflare Pages 的边缘网络
 
-### 自定义域名
+### 部署后
 
-部署后，你可以在 Cloudflare Pages 设置中添加自定义域名：
+- 获得 `*.pages.dev` 域名
+- 每次 `git push` 自动重新部署
+- 支持预览部署（Pull Request）
+
+### 自定义域名
 
 1. 进入项目设置
 2. 点击 **Custom domains**
 3. 添加你的域名
-4. 按照提示配置 DNS
+4. 按照提示配置 DNS（通常是添加 CNAME 记录）
 
 ## 🔧 配置调整
 
@@ -230,7 +267,31 @@ pinchThreshold: 0.05  // 距离阈值，值越小越灵敏
 
 ### 添加新语言
 
-在 `assets/js/i18n.js` 中添加新的语言配置。
+在 `assets/js/i18n.js` 中添加新的语言配置：
+
+```javascript
+translations: {
+    zh: {
+        newKey: '新文本'
+    },
+    en: {
+        newKey: 'New Text'
+    }
+}
+```
+
+在代码中使用：
+
+```javascript
+import { I18N } from './i18n.js';
+const text = I18N.t('newKey');
+```
+
+在HTML中使用：
+
+```html
+<span data-i18n="newKey">默认文本</span>
+```
 
 ## 🔍 故障排除
 
@@ -256,6 +317,14 @@ pinchThreshold: 0.05  // 距离阈值，值越小越灵敏
 - 检查浏览器控制台错误信息
 - 验证浏览器支持 ES6 模块
 
+### 部署失败
+
+检查以下几点：
+1. 确保 Build command 为空
+2. Build output directory 设置为 `/`
+3. 确保所有文件都已推送到 Git
+4. 检查 Cloudflare Pages 的构建日志
+
 ## 🌐 浏览器兼容性
 
 - ✅ Chrome 90+
@@ -274,6 +343,23 @@ pinchThreshold: 0.05  // 距离阈值，值越小越灵敏
 2. **光线充足** - 确保手部清晰可见
 3. **适当距离** - 保持手部在摄像头视野中央
 4. **练习捏合** - 熟悉捏合手势的力度和距离
+
+## 📊 项目统计
+
+- **JavaScript 模块**: 8 个
+- **CSS 文件**: 1 个
+- **HTML 文件**: 1 个
+- **总代码行数**: ~1800+ 行
+- **支持语言**: 2 种（中文、英文）
+
+## 🎯 项目亮点
+
+- ✅ 完整的双语支持（中英文）
+- ✅ 模块化的国际化系统
+- ✅ 平滑的绘图体验（EMA + 贝塞尔曲线）
+- ✅ 现代化的 UI 设计（玻璃态）
+- ✅ 完善的文档
+- ✅ 一键部署到 Cloudflare Pages
 
 ## 📝 许可证
 
@@ -447,45 +533,82 @@ Complete Chinese-English bilingual support:
 
 ## ☁️ Cloudflare Pages Deployment
 
-This project can be deployed directly to Cloudflare Pages without any build steps.
+This project is a pure static website that supports automatic deployment to Cloudflare Pages via Git integration.
 
-### Method 1: Git Integration (Recommended)
+### Method 1: Git Integration (Recommended - Auto Deploy)
 
-1. Push code to GitHub/GitLab
-2. Log in to [Cloudflare Dashboard](https://dash.cloudflare.com/)
-3. Go to **Pages** → **Create a project**
-4. Select your Git repository
-5. Configure build settings:
-   - **Framework preset**: None
-   - **Build command**: (leave empty)
-   - **Build output directory**: `/`
-6. Click **Save and Deploy**
+1. **Push code to Git repository**
+   ```bash
+   git add .
+   git commit -m "Initial commit"
+   git push origin main
+   ```
+
+2. **Log in to Cloudflare Dashboard**
+   - Visit https://dash.cloudflare.com/
+   - Go to **Pages** section
+
+3. **Create new project**
+   - Click **Create a project**
+   - Select **Connect to Git**
+   - Authorize and select your repository
+
+4. **Configure build settings**
+   ```
+   Framework preset: None
+   Build command: (leave empty)
+   Build output directory: /
+   Root directory: /
+   ```
+
+5. **Deploy**
+   - Click **Save and Deploy**
+   - Wait for deployment to complete (usually 1-2 minutes)
 
 ### Method 2: Using Wrangler CLI
 
-```bash
-# Install dependencies
-npm install
+If you need to deploy via command line:
 
-# Deploy to Cloudflare Pages
-npm run deploy
+```bash
+# Install Wrangler
+npm install -g wrangler
+
+# Login to Cloudflare
+wrangler login
+
+# Deploy project
+wrangler pages deploy . --project-name=air-writing
 ```
 
-### Requirements
+### Deployment Configuration
 
-- ✅ Pure static files, no server-side rendering needed
-- ✅ Uses ES6 modules, natively supported by modern browsers
-- ✅ All resources loaded via CDN (MediaPipe)
+The project includes a `wrangler.toml` configuration file:
+
+```toml
+name = "air-writing"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
+```
+
+### Why Pure Static?
+
+- ✅ No compilation or build needed
+- ✅ ES6 modules natively supported by browsers
+- ✅ All files can be used directly
 - ✅ Compatible with Cloudflare Pages edge network
 
-### Custom Domain
+### After Deployment
 
-After deployment, you can add a custom domain in Cloudflare Pages settings:
+- Get a `*.pages.dev` domain
+- Auto redeploy on every `git push`
+- Support preview deployments (Pull Requests)
+
+### Custom Domain
 
 1. Go to project settings
 2. Click **Custom domains**
 3. Add your domain
-4. Follow prompts to configure DNS
+4. Follow prompts to configure DNS (usually add CNAME record)
 
 ## 🔧 Configuration
 
@@ -494,7 +617,7 @@ After deployment, you can add a custom domain in Cloudflare Pages settings:
 Modify smoothing factor in `assets/js/app.js`:
 
 ```javascript
-this.smoothing = new DrawingSmoothing(0.5); // 0-1, smaller value = smoother
+this.smoothing = new DrawingSmoothing(0.5); // 0-1, smaller = smoother
 ```
 
 ### Adjust Pinch Threshold
@@ -507,7 +630,31 @@ pinchThreshold: 0.05  // Distance threshold, smaller = more sensitive
 
 ### Add New Language
 
-Add new language configuration in `assets/js/i18n.js`.
+Add new language configuration in `assets/js/i18n.js`:
+
+```javascript
+translations: {
+    zh: {
+        newKey: '新文本'
+    },
+    en: {
+        newKey: 'New Text'
+    }
+}
+```
+
+Use in code:
+
+```javascript
+import { I18N } from './i18n.js';
+const text = I18N.t('newKey');
+```
+
+Use in HTML:
+
+```html
+<span data-i18n="newKey">Default Text</span>
+```
 
 ## 🔍 Troubleshooting
 
@@ -533,6 +680,14 @@ Smoothing algorithm is implemented. To adjust, see Configuration section.
 - Check browser console for errors
 - Verify browser supports ES6 modules
 
+### Deployment Failure
+
+Check the following:
+1. Ensure Build command is empty
+2. Build output directory set to `/`
+3. Ensure all files are pushed to Git
+4. Check Cloudflare Pages build logs
+
 ## 🌐 Browser Compatibility
 
 - ✅ Chrome 90+
@@ -552,6 +707,29 @@ Smoothing algorithm is implemented. To adjust, see Configuration section.
 3. **Proper Distance** - Keep hand in center of camera view
 4. **Practice Pinching** - Get familiar with pinch gesture strength and distance
 
+## 📊 Project Statistics
+
+- **JavaScript Modules**: 8
+- **CSS Files**: 1
+- **HTML Files**: 1
+- **Total Lines of Code**: ~1800+
+- **Supported Languages**: 2 (Chinese, English)
+
+## 🎯 Project Highlights
+
+- ✅ Complete bilingual support (Chinese & English)
+- ✅ Modular internationalization system
+- ✅ Smooth drawing experience (EMA + Bézier curves)
+- ✅ Modern UI design (Glassmorphism)
+- ✅ Comprehensive documentation
+- ✅ One-click deployment to Cloudflare Pages
+
 ## 📝 License
 
 MIT License
+
+---
+
+**项目完成时间 / Project Completion**: 2025-12-07  
+**版本 / Version**: 1.0.0  
+**状态 / Status**: ✅ 生产就绪 / Production Ready

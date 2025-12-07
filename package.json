@@ -4,8 +4,7 @@
     "description": "隔空书写 - 基于手势识别的空中书写应用",
     "type": "module",
     "scripts": {
-        "dev": "npx http-server -p 8000 -o",
-        "deploy": "wrangler pages deploy . --project-name=air-writing"
+        "dev": "npx http-server -p 8000 -o"
     },
     "keywords": [
         "air-writing",
@@ -15,8 +14,5 @@
         "hand-tracking"
     ],
     "author": "",
-    "license": "MIT",
-    "devDependencies": {
-        "wrangler": "^3.0.0"
-    }
+    "license": "MIT"
 }
