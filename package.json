@@ -1,0 +1,22 @@
+{
+    "name": "air-writing",
+    "version": "1.0.0",
+    "description": "隔空书写 - 基于手势识别的空中书写应用",
+    "type": "module",
+    "scripts": {
+        "dev": "npx http-server -p 8000 -o",
+        "deploy": "wrangler pages deploy . --project-name=air-writing"
+    },
+    "keywords": [
+        "air-writing",
+        "gesture-recognition",
+        "mediapipe",
+        "canvas",
+        "hand-tracking"
+    ],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+        "wrangler": "^3.0.0"
+    }
+}

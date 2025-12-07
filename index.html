@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="隔空书写 - 使用手势在空中书写，体验未来交互方式">
+    <title>隔空书写 - Air Writing</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 5L35 12.5V27.5L20 35L5 27.5V12.5L20 5Z" stroke="url(#gradient)" stroke-width="2"
+                        fill="none" />
+                    <circle cx="20" cy="20" r="8" fill="url(#gradient)" />
+                    <defs>
+                        <linearGradient id="gradient" x1="5" y1="5" x2="35" y2="35">
+                            <stop offset="0%" stop-color="#667eea" />
+                            <stop offset="100%" stop-color="#764ba2" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>隔空书写</h1>
+            </div>
+            <div class="status-indicator" id="statusIndicator">
+                <span class="status-dot"></span>
+                <span class="status-text">初始化中...</span>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 视频和画布容器 -->
+            <div class="canvas-container">
+                <video id="videoElement" autoplay playsinline></video>
+                <canvas id="drawingCanvas"></canvas>
+                <canvas id="handCanvas"></canvas>
+
+                <!-- 提示信息 -->
+                <div class="hint-overlay" id="hintOverlay">
+                    <div class="hint-content">
+                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                            <path d="M40 10L50 30H60L50 40L55 60L40 50L25 60L30 40L20 30H30L40 10Z"
+                                fill="url(#hintGradient)" />
+                            <defs>
+                                <linearGradient id="hintGradient" x1="20" y1="10" x2="60" y2="60">
+                                    <stop offset="0%" stop-color="#667eea" />
+                                    <stop offset="100%" stop-color="#764ba2" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <h2>伸出你的手开始书写</h2>
+                        <p>食指和拇指捏合开始绘制，分开停止绘制</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="control-panel">
+                <div class="control-section">
+                    <h3 data-i18n="brushSettings">画笔设置</h3>
+                    <div class="control-group">
+                        <label for="brushSize">
+                            <span data-i18n="brushSize">画笔大小</span>
+                            <span class="value" id="brushSizeValue">5</span>
+                        </label>
+                        <input type="range" id="brushSize" min="1" max="20" value="5" step="1">
+                    </div>
+                    <div class="control-group">
+                        <label>
+                            <span data-i18n="brushColor">画笔颜色</span>
+                        </label>
+                        <div class="color-palette">
+                            <button class="color-btn active" data-color="#667eea" style="background: #667eea;"></button>
+                            <button class="color-btn" data-color="#f093fb" style="background: #f093fb;"></button>
+                            <button class="color-btn" data-color="#4facfe" style="background: #4facfe;"></button>
+                            <button class="color-btn" data-color="#43e97b" style="background: #43e97b;"></button>
+                            <button class="color-btn" data-color="#fa709a" style="background: #fa709a;"></button>
+                            <button class="color-btn" data-color="#feca57" style="background: #feca57;"></button>
+                            <button class="color-btn" data-color="#ff6b6b" style="background: #ff6b6b;"></button>
+                            <button class="color-btn" data-color="#ee5a6f" style="background: #ee5a6f;"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>操作</h3>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" id="clearBtn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M3 5H17M8 5V3H12V5M9 9V15M11 9V15M5 5L6 17H14L15 5" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                            清空画布
+                        </button>
+                        <button class="btn btn-primary" id="saveBtn">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M17 10L10 17L3 10M10 3V17" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                            保存图片
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>手势说明</h3>
+                    <div class="gesture-guide">
+                        <div class="gesture-item">
+                            <div class="gesture-icon">✌️</div>
+                            <div class="gesture-desc">
+                                <strong>捏合</strong>
+                                <span>食指和拇指靠近开始绘制</span>
+                            </div>
+                        </div>
+                        <div class="gesture-item">
+                            <div class="gesture-icon">🖐️</div>
+                            <div class="gesture-desc">
+                                <strong>分开</strong>
+                                <span>手指分开停止绘制</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>使用 MediaPipe 手势识别技术 | 支持 Cloudflare Workers 部署</p>
+        </footer>
+    </div>
+
+    <!-- MediaPipe 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <!-- 主应用脚本 (ES6 模块) -->
+    <script type="module" src="assets/js/app.js"></script>
+</body>
+
+</html>
