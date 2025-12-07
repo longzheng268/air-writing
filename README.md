@@ -682,11 +682,25 @@ Smoothing algorithm is implemented. To adjust, see Configuration section.
 
 ### Deployment Failure
 
-Check the following:
+**MODULE_NOT_FOUND Error:**
+If you see `Error: Cannot find module '/opt/buildhome/repo/deploy'`:
+
+**Cause:** Build command was filled with incorrect content (like `npx run deploy`)
+
+**Solution:**
+1. Go to Cloudflare Pages project settings
+2. Click "Settings" → "Builds & deployments"
+3. Edit "Build configurations"
+4. **Ensure "Build command" is completely empty** ⚠️
+5. Ensure "Build output directory" is set to `/`
+6. Save and redeploy
+
+**Other checks:**
 1. Ensure Build command is empty
 2. Build output directory set to `/`
-3. Ensure all files are pushed to Git
-4. Check Cloudflare Pages build logs
+3. Framework preset set to None
+4. Ensure all files are pushed to Git
+5. Check Cloudflare Pages build logs
 
 ## 🌐 Browser Compatibility
 
@@ -727,6 +741,13 @@ Check the following:
 ## 📝 License
 
 MIT License
+
+---
+
+## 🔗 Links / 链接
+
+- **GitHub**: https://github.com/longzheng268/air-writing
+- **Gitee**: https://gitee.com/longzheng0315/air-writing
 
 ---
 
