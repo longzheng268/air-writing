@@ -53,14 +53,22 @@ export class CanvasRenderer {
         this.drawingCtx.lineCap = 'round';
         this.drawingCtx.lineJoin = 'round';
 
+        // Calculate distance between points
+        const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+        
+        // Skip if points are too close (reduces noise)
+        if (distance < 1) {
+            return;
+        }
+
         this.drawingCtx.beginPath();
         this.drawingCtx.moveTo(x1, y1);
 
         // 使用二次贝塞尔曲线平滑连接
+        // 控制点在两点之间，创建平滑过渡
         const cpx = (x1 + x2) / 2;
         const cpy = (y1 + y2) / 2;
-        this.drawingCtx.quadraticCurveTo(x1, y1, cpx, cpy);
-        this.drawingCtx.lineTo(x2, y2);
+        this.drawingCtx.quadraticCurveTo(cpx, cpy, x2, y2);
 
         this.drawingCtx.stroke();
     }

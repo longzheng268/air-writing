@@ -1,9 +1,9 @@
 // ==================== 绘图平滑器 ====================
 export class DrawingSmoothing {
-    constructor(smoothingFactor = 0.3) {
+    constructor(smoothingFactor = 0.2) {
         this.smoothingFactor = smoothingFactor; // 0-1, 值越小越平滑
         this.points = [];
-        this.maxPoints = 5; // 保留最近的点数
+        this.maxPoints = 8; // 增加保留的点数以获得更平滑的效果
     }
 
     /**

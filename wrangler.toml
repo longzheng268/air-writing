@@ -1,3 +1,6 @@
 name = "air-writing"
 compatibility_date = "2024-01-01"
+
+# For Cloudflare Pages static deployment
+# All files in the root directory will be deployed
 pages_build_output_dir = "."

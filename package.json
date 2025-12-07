@@ -4,7 +4,8 @@
     "description": "隔空书写 - 基于手势识别的空中书写应用",
     "type": "module",
     "scripts": {
-        "dev": "npx http-server -p 8000 -o"
+        "dev": "npx http-server -p 8000 -o",
+        "deploy": "npx wrangler pages deploy . --project-name=air-writing"
     },
     "keywords": [
         "air-writing",

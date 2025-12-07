@@ -4,10 +4,14 @@ import { CONFIG } from './config.js';
 export class GestureDetector {
     constructor() {
         this.pinchThreshold = CONFIG.drawing.pinchThreshold;
+        // Add hysteresis to prevent flickering (30% of threshold)
+        this.pinchHysteresis = this.pinchThreshold * 0.3;
+        this.isPinching = false;
+        this.lastDistance = 1.0;
     }
 
     /**
-     * 检测捏合手势
+     * 检测捏合手势（带滞后效应防止抖动）
      * @param {Array} landmarks - 手部关键点数组
      * @returns {boolean} 是否正在捏合
      */
@@ -21,7 +25,21 @@ export class GestureDetector {
             Math.pow(thumbTip.z - indexTip.z, 2)
         );
 
-        return distance < this.pinchThreshold;
+        // Apply hysteresis to prevent rapid on/off toggling
+        if (this.isPinching) {
+            // If already pinching, need to exceed threshold + hysteresis to release
+            if (distance > this.pinchThreshold + this.pinchHysteresis) {
+                this.isPinching = false;
+            }
+        } else {
+            // If not pinching, need to be below threshold - hysteresis to start
+            if (distance < this.pinchThreshold - this.pinchHysteresis) {
+                this.isPinching = true;
+            }
+        }
+
+        this.lastDistance = distance;
+        return this.isPinching;
     }
 
     /**
