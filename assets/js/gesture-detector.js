@@ -4,8 +4,8 @@ import { CONFIG } from './config.js';
 export class GestureDetector {
     constructor() {
         this.pinchThreshold = CONFIG.drawing.pinchThreshold;
-        // Add hysteresis to prevent flickering
-        this.pinchHysteresis = 0.015; // 30% of threshold as hysteresis band
+        // Add hysteresis to prevent flickering (30% of threshold)
+        this.pinchHysteresis = this.pinchThreshold * 0.3;
         this.isPinching = false;
         this.lastDistance = 1.0;
     }

@@ -68,10 +68,7 @@ export class CanvasRenderer {
         // 控制点在两点之间，创建平滑过渡
         const cpx = (x1 + x2) / 2;
         const cpy = (y1 + y2) / 2;
-        this.drawingCtx.quadraticCurveTo(x1, y1, cpx, cpy);
-        
-        // 从控制点到终点绘制另一段曲线
-        this.drawingCtx.quadraticCurveTo(x2, y2, x2, y2);
+        this.drawingCtx.quadraticCurveTo(cpx, cpy, x2, y2);
 
         this.drawingCtx.stroke();
     }

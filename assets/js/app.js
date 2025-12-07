@@ -147,19 +147,28 @@ class AirWritingApp {
                 // 如果距离较大，在两点之间插值绘制多条短线以防止断触
                 if (distance > 20) {
                     const steps = Math.ceil(distance / 10);
+                    let prevX = this.lastPoint.x;
+                    let prevY = this.lastPoint.y;
+                    
                     for (let i = 1; i <= steps; i++) {
                         const t = i / steps;
                         const interpolatedX = this.lastPoint.x + (smoothedPosition.x - this.lastPoint.x) * t;
                         const interpolatedY = this.lastPoint.y + (smoothedPosition.y - this.lastPoint.y) * t;
                         
                         this.renderer.drawSmoothLine(
-                            this.lastPoint.x,
-                            this.lastPoint.y,
+                            prevX,
+                            prevY,
                             interpolatedX,
                             interpolatedY
                         );
-                        this.lastPoint = { x: interpolatedX, y: interpolatedY };
+                        
+                        prevX = interpolatedX;
+                        prevY = interpolatedY;
                     }
+                    
+                    // 更新最后位置为目标平滑位置（防止位置漂移）
+                    this.prevPoint = this.lastPoint;
+                    this.lastPoint = smoothedPosition;
                 } else {
                     // 使用平滑的贝塞尔曲线绘制
                     this.renderer.drawSmoothLine(
@@ -168,10 +177,10 @@ class AirWritingApp {
                         smoothedPosition.x,
                         smoothedPosition.y
                     );
+                    
+                    this.prevPoint = this.lastPoint;
+                    this.lastPoint = smoothedPosition;
                 }
-                
-                this.prevPoint = this.lastPoint;
-                this.lastPoint = smoothedPosition;
             }
         } else {
             this.isDrawing = false;
