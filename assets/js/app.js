@@ -144,9 +144,16 @@ class AirWritingApp {
                     Math.pow(smoothedPosition.y - this.lastPoint.y, 2)
                 );
 
+                // 过滤掉微小移动（< 0.5 像素）以减少噪声
+                if (distance < 0.5) {
+                    return;
+                }
+
                 // 如果距离较大，在两点之间插值绘制多条短线以防止断触
-                if (distance > 20) {
-                    const steps = Math.ceil(distance / 10);
+                // 降低阈值从 20 到 15，使插值更积极地工作，特别是对快速的横向移动
+                if (distance > 15) {
+                    // 增加插值步数以获得更平滑的线条
+                    const steps = Math.ceil(distance / 8);
                     let prevX = this.lastPoint.x;
                     let prevY = this.lastPoint.y;
                     
