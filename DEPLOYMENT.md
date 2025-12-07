@@ -6,6 +6,15 @@
 
 ## 中文
 
+### 部署前准备
+
+**验证部署准备情况（可选）:**
+```bash
+npm run verify
+```
+
+此命令会检查所有必需的文件是否存在，确保项目可以正常部署。
+
 ### 问题诊断
 
 如果您遇到以下问题：
@@ -101,6 +110,15 @@ air-writing/
 ---
 
 ## English
+
+### Pre-deployment Preparation
+
+**Verify deployment readiness (Optional):**
+```bash
+npm run verify
+```
+
+This command checks if all required files are present, ensuring the project can be deployed successfully.
 
 ### Problem Diagnosis
 
