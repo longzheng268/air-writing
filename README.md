@@ -193,15 +193,19 @@ ctx.quadraticCurveTo(x1, y1, cpx, cpy);
 4. **配置构建设置** ⚠️ **重要**
    ```
    Framework preset: None
-   Build command: (留空 - 不要填写任何内容)
+   Build command: npm run build
    Build output directory: /
-   Root directory: /
+   Root directory: (留空)
    ```
    
    **注意事项：**
+   - ✅ **Build command**: `npm run build` - 验证文件并成功退出
+   - ✅ **Build output directory**: `/` - 必须是斜杠，表示根目录
+   - ❌ **不要使用** `npm run dev`（这会导致部署卡住）
    - ❌ **不要使用** `npx wrangler deploy`（这是 Workers 命令，不适用于 Pages）
-   - ❌ **不要使用** `npm run deploy`（这是本地 CLI 部署命令）
-   - ✅ **保持 Build command 完全为空**（这是静态站点，无需构建）
+   - ❌ **不要使用** `npx wrangler pages deploy`（这是 CLI 命令，不是 Dashboard 命令）
+   
+   > 💡 **遇到部署问题？** 请查看详细的 [部署指南 (DEPLOYMENT.md)](./DEPLOYMENT.md)
 
 5. **部署**
    - 点击 **Save and Deploy**
@@ -333,7 +337,30 @@ const text = I18N.t('newKey');
 
 ### 部署失败
 
-检查以下几点：
+**完整的部署指南请参考：[DEPLOYMENT.md](./DEPLOYMENT.md)** 📖
+
+检查以下常见问题：
+
+**问题 1: 部署后显示 "Hello World"**
+
+**原因：** Build output directory 设置不正确
+
+**解决方案：**
+1. 登录 Cloudflare Dashboard
+2. 进入你的 Pages 项目
+3. 点击 **Settings** → **Builds & deployments**
+4. 点击 **Edit configuration**
+5. ⚠️ **确保 "Build command" 设置为 `npm run build`**
+6. ⚠️ **确保 "Build output directory" 设置为 `/`** (斜杠)
+7. 点击 **Save** 并重新部署
+
+**问题 2: 使用 `npm run dev` 后部署卡住**
+
+**原因：** `npm run dev` 启动开发服务器不会退出
+
+**解决方案：**
+1. 不要使用 `npm run dev` 作为构建命令
+2. 使用 `npm run build` 替代
 
 **错误：`It looks like you've run a Workers-specific command in a Pages project`**
 
@@ -346,18 +373,18 @@ const text = I18N.t('newKey');
 2. 进入你的 Pages 项目
 3. 点击 **Settings** → **Builds & deployments**
 4. 点击 **Edit configuration**
-5. ⚠️ **确保 "Build command" 字段完全为空**（不要填写任何内容）
+5. ⚠️ **确保 "Build command" 设置为 `npm run build`**
 6. 确保 "Build output directory" 设置为 `/`
 7. 点击 **Save** 并重新部署
 
 **说明：**
 - `npx wrangler deploy` 是用于 Cloudflare Workers 的命令
-- `npx wrangler pages deploy` 是用于 Cloudflare Pages 的命令
-- 但在 Cloudflare Pages Dashboard 的 Git 集成部署中，不需要任何部署命令
+- `npx wrangler pages deploy` 是用于 Cloudflare Pages 的 CLI 命令
+- 在 Cloudflare Pages Dashboard 的 Git 集成部署中，使用 `npm run build` 作为构建命令
 - 只有在本地命令行手动部署时才需要使用 `npm run deploy` 或 `wrangler pages deploy`
 
 **其他检查项：**
-1. 确保 Build command 为空
+1. 确保 Build command 设置为 `npm run build`
 2. Build output directory 设置为 `/`
 3. Framework preset 设置为 None
 
@@ -592,15 +619,19 @@ This project is a pure static website that supports automatic deployment to Clou
 4. **Configure build settings** ⚠️ **IMPORTANT**
    ```
    Framework preset: None
-   Build command: (leave empty - do not enter anything)
+   Build command: npm run build
    Build output directory: /
-   Root directory: /
+   Root directory: (leave empty)
    ```
    
    **Important Notes:**
+   - ✅ **Build command**: `npm run build` - Validates files and exits successfully
+   - ✅ **Build output directory**: `/` - Must be forward slash, indicating root directory
+   - ❌ **DO NOT use** `npm run dev` (this causes deployment to hang)
    - ❌ **DO NOT use** `npx wrangler deploy` (this is a Workers command, not for Pages)
-   - ❌ **DO NOT use** `npm run deploy` (this is for local CLI deployment)
-   - ✅ **Keep Build command completely empty** (this is a static site, no build needed)
+   - ❌ **DO NOT use** `npx wrangler pages deploy` (this is a CLI command, not for Dashboard)
+   
+   > 💡 **Having deployment issues?** See detailed [Deployment Guide (DEPLOYMENT.md)](./DEPLOYMENT.md)
 
 5. **Deploy**
    - Click **Save and Deploy**
@@ -732,6 +763,31 @@ Smoothing algorithm is implemented. To adjust, see Configuration section.
 
 ### Deployment Failure
 
+**For complete deployment guide, see: [DEPLOYMENT.md](./DEPLOYMENT.md)** 📖
+
+Check these common issues:
+
+**Issue 1: "Hello World" appears after deployment**
+
+**Cause:** Incorrect Build output directory setting
+
+**Solution:**
+1. Log in to Cloudflare Dashboard
+2. Go to your Pages project
+3. Click **Settings** → **Builds & deployments**
+4. Click **Edit configuration**
+5. ⚠️ **Ensure "Build command" is set to `npm run build`**
+6. ⚠️ **Ensure "Build output directory" is set to `/`** (forward slash)
+7. Click **Save** and redeploy
+
+**Issue 2: Deployment hangs when using `npm run dev`**
+
+**Cause:** `npm run dev` starts a dev server that never exits
+
+**Solution:**
+1. Don't use `npm run dev` as build command
+2. Use `npm run build` instead
+
 **Error: `It looks like you've run a Workers-specific command in a Pages project`**
 
 If you see this error when deploying to Cloudflare Pages:
@@ -743,35 +799,19 @@ If you see this error when deploying to Cloudflare Pages:
 2. Go to your Pages project
 3. Click **Settings** → **Builds & deployments**
 4. Click **Edit configuration**
-5. ⚠️ **Ensure "Build command" field is completely empty** (do not enter anything)
+5. ⚠️ **Ensure "Build command" is set to `npm run build`**
 6. Ensure "Build output directory" is set to `/`
 7. Click **Save** and redeploy
 
 **Explanation:**
 - `npx wrangler deploy` is the command for Cloudflare Workers
-- `npx wrangler pages deploy` is the command for Cloudflare Pages
-- However, in Cloudflare Pages Dashboard Git integration deployment, no deploy command is needed
+- `npx wrangler pages deploy` is the command for Cloudflare Pages CLI
+- In Cloudflare Pages Dashboard Git integration deployment, use `npm run build` as build command
 - Only use `npm run deploy` or `wrangler pages deploy` when manually deploying from local command line
 
-**MODULE_NOT_FOUND Error:**
-If you see `Error: Cannot find module '/opt/buildhome/repo/deploy'`:
-
-**Cause:** Build command was filled with incorrect content (like `npx run deploy`)
-
-**Solution:**
-1. Go to Cloudflare Pages project settings
-2. Click "Settings" → "Builds & deployments"
-3. Edit "Build configurations"
-4. **Ensure "Build command" is completely empty** ⚠️
-5. Ensure "Build output directory" is set to `/`
-6. Save and redeploy
-
 **Other checks:**
-1. Ensure Build command is empty
+1. Ensure Build command is set to `npm run build`
 2. Build output directory set to `/`
-3. Framework preset set to None
-4. Ensure all files are pushed to Git
-5. Check Cloudflare Pages build logs
 
 ## 🌐 Browser Compatibility
 
