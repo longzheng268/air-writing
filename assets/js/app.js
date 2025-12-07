@@ -35,8 +35,8 @@ class AirWritingApp {
         this.lastPoint = null;
         this.prevPoint = null;
 
-        // 平滑器
-        this.smoothing = new DrawingSmoothing(0.5);
+        // 平滑器 - 使用更强的平滑效果
+        this.smoothing = new DrawingSmoothing(0.2);
 
         this.init();
     }
@@ -138,13 +138,38 @@ class AirWritingApp {
                 this.lastPoint = smoothedPosition;
                 this.prevPoint = null;
             } else {
-                // 使用平滑的贝塞尔曲线绘制
-                this.renderer.drawSmoothLine(
-                    this.lastPoint.x,
-                    this.lastPoint.y,
-                    smoothedPosition.x,
-                    smoothedPosition.y
+                // 计算点之间的距离
+                const distance = Math.sqrt(
+                    Math.pow(smoothedPosition.x - this.lastPoint.x, 2) +
+                    Math.pow(smoothedPosition.y - this.lastPoint.y, 2)
                 );
+
+                // 如果距离较大，在两点之间插值绘制多条短线以防止断触
+                if (distance > 20) {
+                    const steps = Math.ceil(distance / 10);
+                    for (let i = 1; i <= steps; i++) {
+                        const t = i / steps;
+                        const interpolatedX = this.lastPoint.x + (smoothedPosition.x - this.lastPoint.x) * t;
+                        const interpolatedY = this.lastPoint.y + (smoothedPosition.y - this.lastPoint.y) * t;
+                        
+                        this.renderer.drawSmoothLine(
+                            this.lastPoint.x,
+                            this.lastPoint.y,
+                            interpolatedX,
+                            interpolatedY
+                        );
+                        this.lastPoint = { x: interpolatedX, y: interpolatedY };
+                    }
+                } else {
+                    // 使用平滑的贝塞尔曲线绘制
+                    this.renderer.drawSmoothLine(
+                        this.lastPoint.x,
+                        this.lastPoint.y,
+                        smoothedPosition.x,
+                        smoothedPosition.y
+                    );
+                }
+                
                 this.prevPoint = this.lastPoint;
                 this.lastPoint = smoothedPosition;
             }

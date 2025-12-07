@@ -21,7 +21,7 @@ export const CONFIG = {
         minBrushSize: 1,
         maxBrushSize: 20,
         defaultColor: '#667eea',
-        pinchThreshold: 0.05  // 捏合距离阈值
+        pinchThreshold: 0.06  // 增加捏合距离阈值，使其更容易触发和保持
     },
 
     // 颜色预设
