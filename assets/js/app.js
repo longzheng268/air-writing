@@ -51,6 +51,9 @@ class AirWritingApp {
         // 初始化隐私弹窗
         this.initPrivacyModal();
 
+        // 移动端优化
+        this.setupMobileOptimization();
+
         this.setupCanvas();
         await this.initializeMediaPipe();
     }
@@ -61,20 +64,72 @@ class AirWritingApp {
     initPrivacyModal() {
         const privacyModal = document.getElementById('privacyModal');
         const privacyAcceptBtn = document.getElementById('privacyAcceptBtn');
+
+        if (!privacyModal || !privacyAcceptBtn) return;
+
+        // 检查 localStorage
         const hasAcceptedPrivacy = localStorage.getItem('airWritingPrivacyAccepted');
 
-        // 如果用户还未接受隐私声明,显示弹窗
+        // 只在明确未接受时显示
         if (!hasAcceptedPrivacy) {
             privacyModal.classList.remove('hidden');
+            privacyModal.style.display = 'flex'; // 确保显示
         } else {
+            // 确保隐藏
             privacyModal.classList.add('hidden');
+            privacyModal.style.display = 'none';
         }
 
         // 点击"我知道了"按钮
-        privacyAcceptBtn.addEventListener('click', () => {
+        privacyAcceptBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // 防止可能的默认行为
             localStorage.setItem('airWritingPrivacyAccepted', 'true');
+
+            // 双重隐藏保障
             privacyModal.classList.add('hidden');
+            privacyModal.style.display = 'none';
         });
+    }
+
+    /**
+     * 移动端沉浸式体验优化
+     */
+    setupMobileOptimization() {
+        // 检测是否为移动设备
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        if (!isMobile) return;
+
+        // 设置视口高度CSS变量,解决移动端地址栏问题
+        const setViewportHeight = () => {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+
+        setViewportHeight();
+        window.addEventListener('resize', setViewportHeight);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(setViewportHeight, 100);
+        });
+
+        // 防止双击缩放
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (event) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+
+        // 防止捏合缩放
+        document.addEventListener('gesturestart', (event) => {
+            event.preventDefault();
+        });
+
+        // 滚动到顶部以隐藏地址栏
+        window.scrollTo(0, 1);
+        setTimeout(() => window.scrollTo(0, 0), 0);
     }
 
 

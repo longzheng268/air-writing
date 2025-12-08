@@ -630,9 +630,10 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 .privacy-modal.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 .privacy-content {
@@ -653,6 +654,7 @@ input[type="range"]::-moz-range-thumb:hover {
         opacity: 0;
         transform: translateY(-30px) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -680,10 +682,68 @@ input[type="range"]::-moz-range-thumb:hover {
 }
 
 /* ==================== 移动设备优化 ==================== */
+
+/* 移动端沉浸式体验 */
 @media (max-width: 768px) {
+    body {
+        /* 防止下拉刷新 */
+        overscroll-behavior: none;
+        /* 隐藏滚动条 */
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* 全屏容器 */
+    .container {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        display: flex;
+        flex-direction: column;
+        padding: var(--spacing-xs);
+    }
+
+    /* 优化头部 */
+    .header {
+        flex-shrink: 0;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    /* 主内容区占满剩余空间 */
+    .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        min-height: 0;
+    }
+
+    /* 画布容器 - 竖屏优化 */
+    .canvas-container {
+        flex: 1;
+        aspect-ratio: unset;
+        min-height: 50vh;
+    }
+
+    /* 控制面板 - 紧凑布局 */
+    .control-panel {
+        flex-shrink: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xs);
+        max-height: 40vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 隐私弹窗优化 */
     .privacy-content {
         padding: var(--spacing-lg);
         max-width: 90%;
+        margin: 0 var(--spacing-sm);
     }
 
     .privacy-content h2 {
@@ -694,50 +754,73 @@ input[type="range"]::-moz-range-thumb:hover {
         font-size: 1rem;
     }
 
-    /* 优化画布容器在移动设备上的显示 */
-    .canvas-container {
-        aspect-ratio: 4 / 3;
-    }
-
-    /* 优化控制面板布局 */
-    .control-panel {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: var(--spacing-sm);
-    }
-
-    /* 优化颜色选择器 */
+    /* 优化颜色选择器 - 单行显示 */
     .color-palette {
         grid-template-columns: repeat(8, 1fr);
+        gap: 6px;
     }
 
-    /* 优化按钮组 */
+    /* 优化按钮组 - 横向排列 */
     .button-group {
         flex-direction: row;
+        gap: var(--spacing-xs);
     }
 
     .btn {
-        font-size: 0.9rem;
-        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.85rem;
+        padding: 10px 12px;
+        flex: 1;
     }
 
-    /* 优化手势指南 */
+    .btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /* 优化控制区块 */
+    .control-section {
+        padding: var(--spacing-sm);
+    }
+
+    .control-section h3 {
+        font-size: 0.95rem;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    /* 优化手势指南 - 紧凑显示 */
     .gesture-guide {
+        gap: var(--spacing-xs);
+    }
+
+    .gesture-item {
+        padding: var(--spacing-xs);
         gap: var(--spacing-sm);
     }
 
     .gesture-icon {
-        font-size: 1.5rem;
-        width: 40px;
-        height: 40px;
+        font-size: 1.3rem;
+        width: 36px;
+        height: 36px;
     }
 
     .gesture-desc strong {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
     }
 
     .gesture-desc span {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+    }
+
+    /* 页脚紧凑显示 */
+    .footer {
+        flex-shrink: 0;
+        margin-top: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-xs);
+        font-size: 0.75rem;
+    }
+
+    .footer p {
+        margin-top: 4px !important;
     }
 }
 
@@ -746,57 +829,78 @@ input[type="range"]::-moz-range-thumb:hover {
     :root {
         --spacing-xs: 0.4rem;
         --spacing-sm: 0.8rem;
-        --spacing-md: 1.2rem;
-        --spacing-lg: 1.5rem;
-        --spacing-xl: 2rem;
-    }
-
-    .container {
-        padding: var(--spacing-xs);
+        --spacing-md: 1rem;
+        --spacing-lg: 1.2rem;
+        --spacing-xl: 1.5rem;
     }
 
     .header {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-xs);
     }
 
     .logo h1 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 
     .logo-img {
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .status-indicator {
+        padding: 4px 8px;
     }
 
     .status-text {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
     }
 
     .control-section h3 {
-        font-size: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .control-group label {
+        font-size: 0.85rem;
     }
 
     .color-palette {
         grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
     }
 
-    .footer {
-        font-size: 0.8rem;
+    .hint-content h2 {
+        font-size: 1.3rem;
     }
 
-    .footer p {
-        margin-top: 4px !important;
+    .hint-content p {
+        font-size: 0.9rem;
+    }
+
+    .hint-content svg {
+        width: 60px;
+        height: 60px;
     }
 }
 
-/* 横屏模式优化 */
+/* 横屏模式优化 - 保持桌面布局 */
 @media (max-width: 768px) and (orientation: landscape) {
-    .canvas-container {
-        aspect-ratio: 16 / 9;
+    .container {
+        padding: var(--spacing-sm);
     }
 
     .main-content {
-        grid-template-columns: 1.2fr 0.8fr;
+        grid-template-columns: 1.5fr 1fr;
+        flex-direction: row;
+    }
+
+    .canvas-container {
+        aspect-ratio: 16 / 9;
+        min-height: unset;
     }
 
     .control-panel {
@@ -822,14 +926,15 @@ input[type="range"]::-moz-range-thumb:hover {
 
 /* 触摸设备优化 */
 @media (hover: none) and (pointer: coarse) {
+
     /* 增大可点击区域 */
     .btn {
         min-height: 44px;
     }
 
     .color-btn {
-        min-width: 44px;
-        min-height: 44px;
+        min-width: 40px;
+        min-height: 40px;
     }
 
     /* 移除hover效果 */
@@ -843,7 +948,15 @@ input[type="range"]::-moz-range-thumb:hover {
         background: var(--bg-card-hover);
     }
 
+    .btn:hover {
+        transform: none;
+    }
+
     /* 优化滑块 */
+    input[type="range"] {
+        height: 8px;
+    }
+
     input[type="range"]::-webkit-slider-thumb {
         width: 24px;
         height: 24px;
@@ -852,5 +965,26 @@ input[type="range"]::-moz-range-thumb:hover {
     input[type="range"]::-moz-range-thumb {
         width: 24px;
         height: 24px;
+    }
+
+    /* 优化状态指示器 */
+    .status-indicator {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* 超小屏幕优化 (iPhone SE等) */
+@media (max-width: 375px) {
+    .logo h1 {
+        font-size: 1.1rem;
+    }
+
+    .btn {
+        font-size: 0.8rem;
+        padding: 8px 10px;
+    }
+
+    .control-section {
+        padding: 8px;
     }
 }
