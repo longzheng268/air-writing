@@ -225,21 +225,23 @@ class AirWritingApp {
                     Math.pow(smoothedPosition.y - this.lastPoint.y, 2)
                 );
 
-                // 过滤掉微小移动（< 0.5 像素）以减少噪声
-                if (distance < 0.5) {
+                // 过滤掉微小移动（< 0.3 像素）以减少噪声
+                // 降低阈值以提高灵敏度
+                if (distance < 0.3) {
                     return;
                 }
 
                 // 如果距离较大，在两点之间插值绘制多条短线以防止断触
-                // 降低阈值从 20 到 15，使插值更积极地工作，特别是对快速的横向移动
-                if (distance > 15) {
-                    // 增加插值步数以获得更平滑的线条
-                    const steps = Math.ceil(distance / 8);
+                // 优化：降低阈值从 15 到 10，使插值更积极，特别适合快速书写
+                if (distance > 10) {
+                    // 自适应插值步数：距离越大，步数越多，但设置上限防止性能问题
+                    const steps = Math.min(Math.ceil(distance / 6), 30);
                     let prevX = this.lastPoint.x;
                     let prevY = this.lastPoint.y;
 
                     for (let i = 1; i <= steps; i++) {
                         const t = i / steps;
+                        // 使用线性插值
                         const interpolatedX = this.lastPoint.x + (smoothedPosition.x - this.lastPoint.x) * t;
                         const interpolatedY = this.lastPoint.y + (smoothedPosition.y - this.lastPoint.y) * t;
 
@@ -271,10 +273,13 @@ class AirWritingApp {
                 }
             }
         } else {
-            this.isDrawing = false;
-            this.lastPoint = null;
-            this.prevPoint = null;
-            this.smoothing.reset();
+            // 快速重置状态，实现快速停笔
+            if (this.isDrawing) {
+                this.isDrawing = false;
+                this.lastPoint = null;
+                this.prevPoint = null;
+                this.smoothing.reset();
+            }
         }
     }
 
