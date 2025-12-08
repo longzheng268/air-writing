@@ -610,3 +610,247 @@ input[type="range"]::-moz-range-thumb:hover {
 .control-section:nth-child(3) {
     animation-delay: 0.3s;
 }
+
+/* ==================== 隐私声明弹窗 ==================== */
+.privacy-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.privacy-modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.privacy-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(20px);
+    animation: modalSlideIn 0.4s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.privacy-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: var(--spacing-md);
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.privacy-content p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: var(--spacing-lg);
+}
+
+.privacy-content .btn {
+    min-width: 150px;
+}
+
+/* ==================== 移动设备优化 ==================== */
+@media (max-width: 768px) {
+    .privacy-content {
+        padding: var(--spacing-lg);
+        max-width: 90%;
+    }
+
+    .privacy-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .privacy-content p {
+        font-size: 1rem;
+    }
+
+    /* 优化画布容器在移动设备上的显示 */
+    .canvas-container {
+        aspect-ratio: 4 / 3;
+    }
+
+    /* 优化控制面板布局 */
+    .control-panel {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+    }
+
+    /* 优化颜色选择器 */
+    .color-palette {
+        grid-template-columns: repeat(8, 1fr);
+    }
+
+    /* 优化按钮组 */
+    .button-group {
+        flex-direction: row;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    /* 优化手势指南 */
+    .gesture-guide {
+        gap: var(--spacing-sm);
+    }
+
+    .gesture-icon {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
+    }
+
+    .gesture-desc strong {
+        font-size: 0.95rem;
+    }
+
+    .gesture-desc span {
+        font-size: 0.85rem;
+    }
+}
+
+/* 小屏幕设备优化 */
+@media (max-width: 480px) {
+    :root {
+        --spacing-xs: 0.4rem;
+        --spacing-sm: 0.8rem;
+        --spacing-md: 1.2rem;
+        --spacing-lg: 1.5rem;
+        --spacing-xl: 2rem;
+    }
+
+    .container {
+        padding: var(--spacing-xs);
+    }
+
+    .header {
+        padding: var(--spacing-sm);
+    }
+
+    .logo h1 {
+        font-size: 1.3rem;
+    }
+
+    .logo-img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .status-text {
+        font-size: 0.8rem;
+    }
+
+    .control-section h3 {
+        font-size: 1rem;
+    }
+
+    .color-palette {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .footer {
+        font-size: 0.8rem;
+    }
+
+    .footer p {
+        margin-top: 4px !important;
+    }
+}
+
+/* 横屏模式优化 */
+@media (max-width: 768px) and (orientation: landscape) {
+    .canvas-container {
+        aspect-ratio: 16 / 9;
+    }
+
+    .main-content {
+        grid-template-columns: 1.2fr 0.8fr;
+    }
+
+    .control-panel {
+        max-height: 70vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-color) transparent;
+    }
+
+    .control-panel::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .control-panel::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .control-panel::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: var(--radius-xl);
+    }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+    /* 增大可点击区域 */
+    .btn {
+        min-height: 44px;
+    }
+
+    .color-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* 移除hover效果 */
+    .control-section:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .gesture-item:hover {
+        transform: none;
+        background: var(--bg-card-hover);
+    }
+
+    /* 优化滑块 */
+    input[type="range"]::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+    }
+}

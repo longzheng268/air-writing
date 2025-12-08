@@ -48,9 +48,35 @@ class AirWritingApp {
         // 初始化国际化
         I18N.init();
 
+        // 初始化隐私弹窗
+        this.initPrivacyModal();
+
         this.setupCanvas();
         await this.initializeMediaPipe();
     }
+
+    /**
+     * 初始化隐私声明弹窗
+     */
+    initPrivacyModal() {
+        const privacyModal = document.getElementById('privacyModal');
+        const privacyAcceptBtn = document.getElementById('privacyAcceptBtn');
+        const hasAcceptedPrivacy = localStorage.getItem('airWritingPrivacyAccepted');
+
+        // 如果用户还未接受隐私声明,显示弹窗
+        if (!hasAcceptedPrivacy) {
+            privacyModal.classList.remove('hidden');
+        } else {
+            privacyModal.classList.add('hidden');
+        }
+
+        // 点击"我知道了"按钮
+        privacyAcceptBtn.addEventListener('click', () => {
+            localStorage.setItem('airWritingPrivacyAccepted', 'true');
+            privacyModal.classList.add('hidden');
+        });
+    }
+
 
     /**
      * 设置画布尺寸
@@ -156,23 +182,23 @@ class AirWritingApp {
                     const steps = Math.ceil(distance / 8);
                     let prevX = this.lastPoint.x;
                     let prevY = this.lastPoint.y;
-                    
+
                     for (let i = 1; i <= steps; i++) {
                         const t = i / steps;
                         const interpolatedX = this.lastPoint.x + (smoothedPosition.x - this.lastPoint.x) * t;
                         const interpolatedY = this.lastPoint.y + (smoothedPosition.y - this.lastPoint.y) * t;
-                        
+
                         this.renderer.drawSmoothLine(
                             prevX,
                             prevY,
                             interpolatedX,
                             interpolatedY
                         );
-                        
+
                         prevX = interpolatedX;
                         prevY = interpolatedY;
                     }
-                    
+
                     // 更新最后位置为目标平滑位置（防止位置漂移）
                     this.prevPoint = this.lastPoint;
                     this.lastPoint = smoothedPosition;
@@ -184,7 +210,7 @@ class AirWritingApp {
                         smoothedPosition.x,
                         smoothedPosition.y
                     );
-                    
+
                     this.prevPoint = this.lastPoint;
                     this.lastPoint = smoothedPosition;
                 }
