@@ -56,8 +56,8 @@ export class CanvasRenderer {
         // Calculate distance between points
         const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
         
-        // Skip if points are too close (reduces noise)
-        if (distance < 1) {
+        // Skip if points are too close (reduces noise) - lower threshold to improve sensitivity
+        if (distance < 0.5) {
             return;
         }
 

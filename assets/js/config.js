@@ -21,7 +21,18 @@ export const CONFIG = {
         minBrushSize: 1,
         maxBrushSize: 20,
         defaultColor: '#667eea',
-        pinchThreshold: 0.06  // 增加捏合距离阈值，使其更容易触发和保持
+        pinchThreshold: 0.055,  // Fine-tune threshold for better balance between sensitivity and stability
+        maxInterpolationSteps: 30,  // Maximum interpolation steps to prevent performance issues during very fast movements
+        
+        // Adaptive smoothing parameters
+        fastMovementVelocity: 200,  // pixels/second - threshold for fast movement detection
+        slowMovementVelocity: 50,   // pixels/second - threshold for slow movement detection
+        fastSmoothingFactor: 0.35,  // smoothing factor for fast movements (more responsive)
+        fastSmoothingMultiplier: 1.75,  // multiplier to reach fast smoothing factor from base
+        slowSmoothingMultiplier: 0.9,   // multiplier for slow smoothing factor (more stable)
+        
+        // Gesture detection parameters
+        fastHandMovementThreshold: 0.5  // pixels/millisecond (500 px/s) - threshold for fast hand movement in hysteresis calculation
     },
 
     // 颜色预设

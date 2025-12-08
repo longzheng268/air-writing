@@ -225,21 +225,25 @@ class AirWritingApp {
                     Math.pow(smoothedPosition.y - this.lastPoint.y, 2)
                 );
 
-                // 过滤掉微小移动（< 0.5 像素）以减少噪声
-                if (distance < 0.5) {
+                // Filter out tiny movements (< 0.3 pixels) to reduce noise
+                // Lower threshold to improve sensitivity
+                if (distance < 0.3) {
                     return;
                 }
 
-                // 如果距离较大，在两点之间插值绘制多条短线以防止断触
-                // 降低阈值从 20 到 15，使插值更积极地工作，特别是对快速的横向移动
-                if (distance > 15) {
-                    // 增加插值步数以获得更平滑的线条
-                    const steps = Math.ceil(distance / 8);
+                // If distance is large, interpolate between points to prevent line breaks
+                // Optimization: lower threshold from 15 to 10 for more aggressive interpolation,
+                // especially suitable for fast writing
+                if (distance > 10) {
+                    // Adaptive interpolation steps: larger distance means more steps,
+                    // but set upper limit to prevent performance issues
+                    const steps = Math.min(Math.ceil(distance / 6), CONFIG.drawing.maxInterpolationSteps);
                     let prevX = this.lastPoint.x;
                     let prevY = this.lastPoint.y;
 
                     for (let i = 1; i <= steps; i++) {
                         const t = i / steps;
+                        // Use linear interpolation
                         const interpolatedX = this.lastPoint.x + (smoothedPosition.x - this.lastPoint.x) * t;
                         const interpolatedY = this.lastPoint.y + (smoothedPosition.y - this.lastPoint.y) * t;
 
@@ -271,10 +275,13 @@ class AirWritingApp {
                 }
             }
         } else {
-            this.isDrawing = false;
-            this.lastPoint = null;
-            this.prevPoint = null;
-            this.smoothing.reset();
+            // Quick state reset for fast pen lift
+            if (this.isDrawing) {
+                this.isDrawing = false;
+                this.lastPoint = null;
+                this.prevPoint = null;
+                this.smoothing.reset();
+            }
         }
     }
 

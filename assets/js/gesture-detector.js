@@ -8,12 +8,21 @@ export class GestureDetector {
         this.pinchHysteresis = this.pinchThreshold * 0.3;
         this.isPinching = false;
         this.lastDistance = 1.0;
+        
+        // Add velocity tracking for adaptive thresholds
+        this.distanceHistory = [];
+        this.maxHistorySize = 5;
+        this.lastTimestamp = performance.now();
+        
+        // Debounce counter - prevent rapid state switching
+        this.stateChangeCounter = 0;
+        this.minStableFrames = 2; // Requires 2 consecutive frames to confirm state change
     }
 
     /**
-     * 检测捏合手势（带滞后效应防止抖动）
-     * @param {Array} landmarks - 手部关键点数组
-     * @returns {boolean} 是否正在捏合
+     * Detect pinch gesture (with adaptive hysteresis and debouncing)
+     * @param {Array} landmarks - Hand landmark array
+     * @returns {boolean} Whether currently pinching
      */
     detectPinch(landmarks) {
         const thumbTip = landmarks[4];
@@ -25,20 +34,64 @@ export class GestureDetector {
             Math.pow(thumbTip.z - indexTip.z, 2)
         );
 
-        // Apply hysteresis to prevent rapid on/off toggling
+        // Calculate distance change rate (pixels per second)
+        const currentTime = performance.now();
+        const deltaTime = Math.max(currentTime - this.lastTimestamp, 1);
+        const distanceChangeRate = Math.abs(distance - this.lastDistance) / deltaTime * 1000;
+        
+        // Update distance history
+        this.distanceHistory.push(distance);
+        if (this.distanceHistory.length > this.maxHistorySize) {
+            this.distanceHistory.shift();
+        }
+        
+        // Calculate average distance for more stable judgment
+        const avgDistance = this.distanceHistory.reduce((sum, d) => sum + d, 0) / this.distanceHistory.length;
+        
+        // Adaptive hysteresis: increase during fast movement, decrease during slow movement
+        // This maintains stability during fast writing and quick response when stopping
+        // Threshold from config: pixels/ms = pixels/second / 1000
+        const adaptiveHysteresis = distanceChangeRate > CONFIG.drawing.fastHandMovementThreshold 
+            ? this.pinchHysteresis * 1.2  // Fast movement: +20% hysteresis to prevent false triggers
+            : this.pinchHysteresis * 0.8;  // Slow movement: -20% hysteresis for better response
+
+        // Use average distance for judgment to reduce single-frame noise
+        const effectiveDistance = avgDistance;
+        
+        // State transition logic
+        let desiredState = this.isPinching;
+        
         if (this.isPinching) {
-            // If already pinching, need to exceed threshold + hysteresis to release
-            if (distance > this.pinchThreshold + this.pinchHysteresis) {
-                this.isPinching = false;
+            // Already pinching, check if should release
+            // Use smaller hysteresis for quick pen lift
+            if (effectiveDistance > this.pinchThreshold + adaptiveHysteresis * 0.7) {
+                desiredState = false;
             }
         } else {
-            // If not pinching, need to be below threshold - hysteresis to start
-            if (distance < this.pinchThreshold - this.pinchHysteresis) {
-                this.isPinching = true;
+            // Not pinching, check if should start
+            if (effectiveDistance < this.pinchThreshold - adaptiveHysteresis) {
+                desiredState = true;
             }
+        }
+        
+        // Debounce logic: require consecutive frames to confirm state change
+        if (desiredState !== this.isPinching) {
+            this.stateChangeCounter++;
+            // For release (pen lift): only 1 frame needed for quick response
+            // For start (pen down): 2 frames needed to prevent false triggers
+            const requiredFrames = desiredState ? this.minStableFrames : 1;
+            
+            if (this.stateChangeCounter >= requiredFrames) {
+                this.isPinching = desiredState;
+                this.stateChangeCounter = 0;
+            }
+        } else {
+            // State consistent, reset counter
+            this.stateChangeCounter = 0;
         }
 
         this.lastDistance = distance;
+        this.lastTimestamp = currentTime;
         return this.isPinching;
     }
 
