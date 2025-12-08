@@ -1,24 +1,24 @@
-// ==================== 绘图平滑器 ====================
+// ==================== Drawing Smoother ====================
 export class DrawingSmoothing {
     constructor(smoothingFactor = 0.2) {
-        this.smoothingFactor = smoothingFactor; // 0-1, 值越小越平滑
+        this.smoothingFactor = smoothingFactor; // 0-1, smaller value = smoother
         this.points = [];
-        this.maxPoints = 8; // 增加保留的点数以获得更平滑的效果
+        this.maxPoints = 8; // Increase number of retained points for smoother effect
         this.lastTimestamp = Date.now();
         this.velocityHistory = [];
         this.maxVelocityHistory = 3;
     }
 
     /**
-     * 添加新点并返回平滑后的点
+     * Add new point and return smoothed point
      * @param {Object} point - {x, y}
-     * @returns {Object} 平滑后的点
+     * @returns {Object} Smoothed point
      */
     addPoint(point) {
         const currentTime = Date.now();
         const deltaTime = Math.max(currentTime - this.lastTimestamp, 1);
         
-        // 计算移动速度
+        // Calculate movement velocity
         let velocity = 0;
         if (this.points.length > 0) {
             const lastPoint = this.points[this.points.length - 1];
@@ -26,10 +26,10 @@ export class DrawingSmoothing {
                 Math.pow(point.x - lastPoint.x, 2) + 
                 Math.pow(point.y - lastPoint.y, 2)
             );
-            velocity = distance / deltaTime * 1000; // 像素/秒
+            velocity = distance / deltaTime * 1000; // pixels/second
         }
         
-        // 更新速度历史
+        // Update velocity history
         this.velocityHistory.push(velocity);
         if (this.velocityHistory.length > this.maxVelocityHistory) {
             this.velocityHistory.shift();
@@ -37,7 +37,7 @@ export class DrawingSmoothing {
         
         this.points.push(point);
 
-        // 保持点数在限制内
+        // Keep point count within limit
         if (this.points.length > this.maxPoints) {
             this.points.shift();
         }
@@ -76,7 +76,7 @@ export class DrawingSmoothing {
             adaptiveSmoothingFactor = this.smoothingFactor * 0.9;
         }
 
-        // 使用加权平均，最新的点权重更高
+        // Use weighted average, with higher weight for newer points
         let totalWeight = 0;
         let smoothedX = 0;
         let smoothedY = 0;
@@ -95,16 +95,18 @@ export class DrawingSmoothing {
     }
 
     /**
-     * 重置平滑器
+     * Reset smoother state
      */
     reset() {
         this.points = [];
+        this.velocityHistory = [];
+        this.lastTimestamp = Date.now();
     }
 
     /**
-     * 使用贝塞尔曲线平滑路径
-     * @param {Array} points - 点数组
-     * @returns {Array} 平滑后的点数组
+     * Smooth path using Bezier curves
+     * @param {Array} points - Array of points
+     * @returns {Array} Array of smoothed points
      */
     static smoothPath(points) {
         if (points.length < 3) {
@@ -119,7 +121,7 @@ export class DrawingSmoothing {
             const curr = points[i];
             const next = points[i + 1];
 
-            // 使用三点平均
+            // Use three-point average
             smoothed.push({
                 x: (prev.x + curr.x + next.x) / 3,
                 y: (prev.y + curr.y + next.y) / 3
