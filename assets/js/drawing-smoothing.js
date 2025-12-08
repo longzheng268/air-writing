@@ -1,10 +1,12 @@
 // ==================== Drawing Smoother ====================
+import { CONFIG } from './config.js';
+
 export class DrawingSmoothing {
     constructor(smoothingFactor = 0.2) {
         this.smoothingFactor = smoothingFactor; // 0-1, smaller value = smoother
         this.points = [];
         this.maxPoints = 8; // Increase number of retained points for smoother effect
-        this.lastTimestamp = Date.now();
+        this.lastTimestamp = performance.now();
         this.velocityHistory = [];
         this.maxVelocityHistory = 3;
     }
@@ -15,7 +17,7 @@ export class DrawingSmoothing {
      * @returns {Object} Smoothed point
      */
     addPoint(point) {
-        const currentTime = Date.now();
+        const currentTime = performance.now();
         const deltaTime = Math.max(currentTime - this.lastTimestamp, 1);
         
         // Calculate movement velocity
@@ -66,15 +68,18 @@ export class DrawingSmoothing {
         
         // Adaptive smoothing factor: reduce smoothing for fast movement (more responsive),
         // increase smoothing for slow movement (more stable)
-        // Velocity threshold: 200 pixels/second as fast movement criterion
+        // Velocity thresholds from config
         let adaptiveSmoothingFactor = this.smoothingFactor;
-        if (avgVelocity > 200) {
+        if (avgVelocity > CONFIG.drawing.fastMovementVelocity) {
             // Fast movement: increase smoothing factor (e.g., 0.2 * 1.75 = 0.35), reduce lag, stay responsive
             // This allows the cursor to follow hand movement more closely during quick strokes
-            adaptiveSmoothingFactor = Math.min(0.35, this.smoothingFactor * 1.75);
-        } else if (avgVelocity < 50) {
+            adaptiveSmoothingFactor = Math.min(
+                CONFIG.drawing.fastSmoothingFactor, 
+                this.smoothingFactor * CONFIG.drawing.fastSmoothingMultiplier
+            );
+        } else if (avgVelocity < CONFIG.drawing.slowMovementVelocity) {
             // Slow movement: maintain lower smoothing factor for more stable lines
-            adaptiveSmoothingFactor = this.smoothingFactor * 0.9;
+            adaptiveSmoothingFactor = this.smoothingFactor * CONFIG.drawing.slowSmoothingMultiplier;
         }
 
         // Use weighted average, with higher weight for newer points
@@ -101,7 +106,7 @@ export class DrawingSmoothing {
     reset() {
         this.points = [];
         this.velocityHistory = [];
-        this.lastTimestamp = Date.now();
+        this.lastTimestamp = performance.now();
     }
 
     /**
