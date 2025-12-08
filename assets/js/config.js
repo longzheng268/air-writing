@@ -21,7 +21,8 @@ export const CONFIG = {
         minBrushSize: 1,
         maxBrushSize: 20,
         defaultColor: '#667eea',
-        pinchThreshold: 0.055  // Fine-tune threshold for better balance between sensitivity and stability
+        pinchThreshold: 0.055,  // Fine-tune threshold for better balance between sensitivity and stability
+        maxInterpolationSteps: 30  // Maximum interpolation steps to prevent performance issues during very fast movements
     },
 
     // 颜色预设

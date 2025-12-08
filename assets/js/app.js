@@ -237,7 +237,7 @@ class AirWritingApp {
                 if (distance > 10) {
                     // Adaptive interpolation steps: larger distance means more steps,
                     // but set upper limit to prevent performance issues
-                    const steps = Math.min(Math.ceil(distance / 6), 30);
+                    const steps = Math.min(Math.ceil(distance / 6), CONFIG.drawing.maxInterpolationSteps);
                     let prevX = this.lastPoint.x;
                     let prevY = this.lastPoint.y;
 

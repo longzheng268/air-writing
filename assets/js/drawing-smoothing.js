@@ -69,7 +69,8 @@ export class DrawingSmoothing {
         // Velocity threshold: 200 pixels/second as fast movement criterion
         let adaptiveSmoothingFactor = this.smoothingFactor;
         if (avgVelocity > 200) {
-            // Fast movement: increase smoothing factor (0.2 -> 0.35), reduce lag, stay responsive
+            // Fast movement: increase smoothing factor (e.g., 0.2 * 1.75 = 0.35), reduce lag, stay responsive
+            // This allows the cursor to follow hand movement more closely during quick strokes
             adaptiveSmoothingFactor = Math.min(0.35, this.smoothingFactor * 1.75);
         } else if (avgVelocity < 50) {
             // Slow movement: maintain lower smoothing factor for more stable lines

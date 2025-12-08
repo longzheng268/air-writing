@@ -34,7 +34,7 @@ export class GestureDetector {
             Math.pow(thumbTip.z - indexTip.z, 2)
         );
 
-        // Calculate distance change rate
+        // Calculate distance change rate (pixels per second)
         const currentTime = Date.now();
         const deltaTime = Math.max(currentTime - this.lastTimestamp, 1);
         const distanceChangeRate = Math.abs(distance - this.lastDistance) / deltaTime * 1000;
@@ -50,6 +50,7 @@ export class GestureDetector {
         
         // Adaptive hysteresis: increase during fast movement, decrease during slow movement
         // This maintains stability during fast writing and quick response when stopping
+        // Threshold: 0.5 pixels/ms = 500 pixels/second is considered fast hand movement
         const adaptiveHysteresis = distanceChangeRate > 0.5 
             ? this.pinchHysteresis * 1.2  // Fast movement: +20% hysteresis to prevent false triggers
             : this.pinchHysteresis * 0.8;  // Slow movement: -20% hysteresis for better response
