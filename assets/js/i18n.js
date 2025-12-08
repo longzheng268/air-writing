@@ -1,7 +1,8 @@
 // ==================== 国际化配置 ====================
 export const I18N = {
-    // 当前语言
-    currentLang: localStorage.getItem('air-writing-lang') || 'zh',
+    // 当前语言: 优先读取本地存储 -> 其次检测浏览器语言 -> 默认为中文
+    currentLang: localStorage.getItem('air-writing-lang') ||
+        (navigator.language.toLowerCase().startsWith('zh') ? 'zh' : 'en'),
 
     // 翻译文本
     translations: {
@@ -28,6 +29,11 @@ export const I18N = {
             gesturePinchDesc: '食指和拇指靠近开始绘制',
             gestureSeparate: '分开',
             gestureSeparateDesc: '手指分开停止绘制',
+
+            // 隐私声明
+            privacyTitle: '🔒 隐私声明',
+            privacyContent: '此应用完全在您的浏览器本地运行，不会上传任何数据到服务器。摄像头数据仅用于本地手势识别，不会被记录或传输。',
+            privacyBtn: '我知道了',
 
             // 页脚
             footerText: '使用 MediaPipe 手势识别技术 | 支持 Cloudflare Pages 部署',
@@ -58,6 +64,11 @@ export const I18N = {
             gesturePinchDesc: 'Bring fingers close to start drawing',
             gestureSeparate: 'Separate',
             gestureSeparateDesc: 'Separate fingers to stop drawing',
+
+            // Privacy Policy
+            privacyTitle: '🔒 Privacy Policy',
+            privacyContent: 'This application runs entirely locally in your browser and does not upload any data to servers. Camera data is used solely for local gesture recognition and is not recorded or transmitted.',
+            privacyBtn: 'I Understand',
 
             // Footer
             footerText: 'Powered by MediaPipe Gesture Recognition | Cloudflare Pages Ready',
