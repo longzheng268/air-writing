@@ -21,7 +21,7 @@ export const CONFIG = {
         minBrushSize: 1,
         maxBrushSize: 20,
         defaultColor: '#667eea',
-        pinchThreshold: 0.055  // 微调阈值，在灵敏度和稳定性之间取得更好的平衡
+        pinchThreshold: 0.055  // Fine-tune threshold for better balance between sensitivity and stability
     },
 
     // 颜色预设

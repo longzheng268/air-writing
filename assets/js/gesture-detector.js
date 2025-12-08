@@ -9,20 +9,20 @@ export class GestureDetector {
         this.isPinching = false;
         this.lastDistance = 1.0;
         
-        // 添加速度跟踪用于自适应阈值
+        // Add velocity tracking for adaptive thresholds
         this.distanceHistory = [];
         this.maxHistorySize = 5;
         this.lastTimestamp = Date.now();
         
-        // 防抖计数器 - 防止快速切换
+        // Debounce counter - prevent rapid state switching
         this.stateChangeCounter = 0;
-        this.minStableFrames = 2; // 需要连续2帧确认状态变化
+        this.minStableFrames = 2; // Requires 2 consecutive frames to confirm state change
     }
 
     /**
-     * 检测捏合手势（带自适应滞后效应和防抖）
-     * @param {Array} landmarks - 手部关键点数组
-     * @returns {boolean} 是否正在捏合
+     * Detect pinch gesture (with adaptive hysteresis and debouncing)
+     * @param {Array} landmarks - Hand landmark array
+     * @returns {boolean} Whether currently pinching
      */
     detectPinch(landmarks) {
         const thumbTip = landmarks[4];
@@ -34,50 +34,50 @@ export class GestureDetector {
             Math.pow(thumbTip.z - indexTip.z, 2)
         );
 
-        // 计算距离变化速度
+        // Calculate distance change rate
         const currentTime = Date.now();
         const deltaTime = Math.max(currentTime - this.lastTimestamp, 1);
         const distanceChangeRate = Math.abs(distance - this.lastDistance) / deltaTime * 1000;
         
-        // 更新距离历史
+        // Update distance history
         this.distanceHistory.push(distance);
         if (this.distanceHistory.length > this.maxHistorySize) {
             this.distanceHistory.shift();
         }
         
-        // 计算平均距离，用于更稳定的判断
+        // Calculate average distance for more stable judgment
         const avgDistance = this.distanceHistory.reduce((sum, d) => sum + d, 0) / this.distanceHistory.length;
         
-        // 自适应滞后：快速移动时增加滞后，慢速移动时减少滞后
-        // 这样可以在快速书写时保持稳定，在停笔时快速响应
+        // Adaptive hysteresis: increase during fast movement, decrease during slow movement
+        // This maintains stability during fast writing and quick response when stopping
         const adaptiveHysteresis = distanceChangeRate > 0.5 
-            ? this.pinchHysteresis * 1.2  // 快速移动：增加20%滞后，防止误触
-            : this.pinchHysteresis * 0.8;  // 慢速移动：减少20%滞后，提高响应
+            ? this.pinchHysteresis * 1.2  // Fast movement: +20% hysteresis to prevent false triggers
+            : this.pinchHysteresis * 0.8;  // Slow movement: -20% hysteresis for better response
 
-        // 使用平均距离进行判断，减少单帧噪声
+        // Use average distance for judgment to reduce single-frame noise
         const effectiveDistance = avgDistance;
         
-        // 状态切换逻辑
+        // State transition logic
         let desiredState = this.isPinching;
         
         if (this.isPinching) {
-            // 已经在捏合状态，检查是否应该释放
-            // 使用较小的滞后以实现快速停笔
+            // Already pinching, check if should release
+            // Use smaller hysteresis for quick pen lift
             if (effectiveDistance > this.pinchThreshold + adaptiveHysteresis * 0.7) {
                 desiredState = false;
             }
         } else {
-            // 未在捏合状态，检查是否应该开始捏合
+            // Not pinching, check if should start
             if (effectiveDistance < this.pinchThreshold - adaptiveHysteresis) {
                 desiredState = true;
             }
         }
         
-        // 防抖逻辑：需要连续几帧确认状态变化
+        // Debounce logic: require consecutive frames to confirm state change
         if (desiredState !== this.isPinching) {
             this.stateChangeCounter++;
-            // 对于释放捏合（停笔），只需要1帧确认，实现快速停笔
-            // 对于开始捏合（起笔），需要2帧确认，防止误触
+            // For release (pen lift): only 1 frame needed for quick response
+            // For start (pen down): 2 frames needed to prevent false triggers
             const requiredFrames = desiredState ? this.minStableFrames : 1;
             
             if (this.stateChangeCounter >= requiredFrames) {
@@ -85,7 +85,7 @@ export class GestureDetector {
                 this.stateChangeCounter = 0;
             }
         } else {
-            // 状态一致，重置计数器
+            // State consistent, reset counter
             this.stateChangeCounter = 0;
         }
 

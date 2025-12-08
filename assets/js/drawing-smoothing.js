@@ -47,7 +47,7 @@ export class DrawingSmoothing {
     }
 
     /**
-     * 获取平滑后的点（使用自适应指数移动平均）
+     * Get smoothed point (using adaptive exponential moving average)
      * @returns {Object} {x, y}
      */
     getSmoothedPoint() {
@@ -59,19 +59,20 @@ export class DrawingSmoothing {
             return this.points[0];
         }
 
-        // 计算平均速度
+        // Calculate average velocity
         const avgVelocity = this.velocityHistory.length > 0
             ? this.velocityHistory.reduce((sum, v) => sum + v, 0) / this.velocityHistory.length
             : 0;
         
-        // 自适应平滑因子：快速移动时减少平滑（更跟手），慢速移动时增加平滑（更稳定）
-        // 速度阈值：200 像素/秒作为快速移动的判断
+        // Adaptive smoothing factor: reduce smoothing for fast movement (more responsive),
+        // increase smoothing for slow movement (more stable)
+        // Velocity threshold: 200 pixels/second as fast movement criterion
         let adaptiveSmoothingFactor = this.smoothingFactor;
         if (avgVelocity > 200) {
-            // 快速移动：增加平滑因子（0.2 -> 0.35），减少延迟，保持跟手
+            // Fast movement: increase smoothing factor (0.2 -> 0.35), reduce lag, stay responsive
             adaptiveSmoothingFactor = Math.min(0.35, this.smoothingFactor * 1.75);
         } else if (avgVelocity < 50) {
-            // 慢速移动：保持较低的平滑因子，获得更稳定的线条
+            // Slow movement: maintain lower smoothing factor for more stable lines
             adaptiveSmoothingFactor = this.smoothingFactor * 0.9;
         }
 
