@@ -1,6 +1,12 @@
 name = "air-writing"
 compatibility_date = "2024-01-01"
 
-# For Cloudflare Pages static deployment
+# For Cloudflare Pages CLI deployment (wrangler pages deploy)
+# This file is only used when deploying via CLI
+# For Dashboard/Git deployment, configure in the Cloudflare Dashboard
+
+# Build output directory - use current directory (root)
 # All files in the root directory will be deployed
 pages_build_output_dir = "."
+
+# Note: For Dashboard deployment, set "Build output directory" to "/" not "."

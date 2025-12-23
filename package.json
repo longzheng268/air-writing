@@ -5,6 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "npx http-server -p 8000 -o",
+        "build": "test -f index.html && echo '📦 Static site - all files are ready for deployment' || (echo '❌ Error: index.html not found' && exit 1)",
+        "verify": "bash verify-deployment.sh",
         "deploy": "npx wrangler pages deploy . --project-name=air-writing"
     },
     "keywords": [
